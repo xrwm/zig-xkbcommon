@@ -4,7 +4,7 @@ pub const Keycode = u32;
 
 pub const Keysym = @import("xkbcommon_keysyms.zig").Keysym;
 
-pub const KeyDirection = extern enum {
+pub const KeyDirection = enum(c_int) {
     up,
     down,
 };
@@ -36,7 +36,7 @@ pub const RuleNames = extern struct {
     options: ?[*:0]const u8,
 };
 
-pub const LogLevel = extern enum {
+pub const LogLevel = enum(c_int) {
     crit = 10,
     err = 20,
     warn = 30,
@@ -45,7 +45,7 @@ pub const LogLevel = extern enum {
 };
 
 pub const Context = opaque {
-    pub const Flags = extern enum {
+    pub const Flags = enum(c_int) {
         no_flags = 0,
         no_default_includes = 1 << 0,
         no_environment_names = 1 << 1,
@@ -101,11 +101,11 @@ pub const Context = opaque {
 };
 
 pub const Keymap = opaque {
-    pub const CompileFlags = extern enum {
+    pub const CompileFlags = enum(c_int) {
         no_flags = 0,
     };
 
-    pub const Format = extern enum {
+    pub const Format = enum(c_int) {
         text_v1 = 1,
     };
 
@@ -204,13 +204,13 @@ pub const Keymap = opaque {
     pub const keyRepeats = xkb_keymap_key_repeats;
 };
 
-pub const ConsumedMode = extern enum {
+pub const ConsumedMode = enum(c_int) {
     xkb,
     gtk,
 };
 
 pub const State = opaque {
-    pub const Component = extern enum(c_int) {
+    pub const Component = enum(c_int) {
         _,
         pub const mods_depressed = 1 << 0;
         pub const mods_latched = 1 << 1;
@@ -223,7 +223,7 @@ pub const State = opaque {
         pub const leds = 1 << 8;
     };
 
-    pub const Match = extern enum(c_int) {
+    pub const Match = enum(c_int) {
         _,
         pub const any = 1 << 0;
         pub const all = 1 << 1;
@@ -325,6 +325,7 @@ pub const State = opaque {
 };
 
 fn refAllDeclsRecursive(comptime T: type) void {
+    @setEvalBranchQuota(1000000);
     const decls = switch (@typeInfo(T)) {
         .Struct => |info| info.decls,
         .Union => |info| info.decls,
